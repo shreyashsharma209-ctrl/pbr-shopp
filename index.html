@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard | Pt. Babulal Ratanlal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="logo-row"><img class="logo-small" src="pbr-logo.jpg" alt="PBR – Pt. Babulal Ratanlal, Since 1940"><span class="tag">HANDCRAFTED SWEETS OF INDIA<br>KHURJA, UTTAR PRADESH</span></div>
+  <nav aria-label="Main">
+    <a class="active" href="index.html">Dashboard</a>
+    <span title="Agle stage me">Sales</span><span title="Agle stage me">Products</span><span title="Agle stage me">Expenses</span>
+    <button id="logoutBtn" type="button">Logout</button>
+  </nav>
+</header>
+<main>
+  <section class="welcome">
+    <img class="hanuman" id="hanuman" src="hanuman.jpg" alt="Shri Hanuman Ji">
+    <div>
+      <p class="jai">॥ जय श्री राम ॥<br>॥ जय बजरंगबली ॥</p>
+      <p><strong>जय श्री हनुमान! 🙏</strong><br>Pt. Babulal Ratanlal में आपका स्वागत है।</p>
+      <p id="greet"></p>
+    </div>
+  </section>
+
+  <div class="filters" role="group" aria-label="Date filter">
+    <button type="button" data-r="today" aria-pressed="true">आज</button>
+    <button type="button" data-r="yesterday" aria-pressed="false">कल</button>
+    <button type="button" data-r="7d" aria-pressed="false">पिछले 7 दिन</button>
+    <button type="button" data-r="month" aria-pressed="false">इस महीने</button>
+    <button type="button" data-r="custom" aria-pressed="false">Custom</button>
+    <span id="customBox" hidden><input type="date" id="from" aria-label="From"> – <input type="date" id="to" aria-label="To"> <button type="button" id="applyCustom">Apply</button></span>
+    <button type="button" id="refresh">↻ Refresh</button>
+  </div>
+  <p class="status" id="status" role="status">Load ho raha hai...</p>
+
+  <div class="cards">
+    <div class="card"><h2>आज की बिक्री</h2><div class="big" id="todaySales">–</div></div>
+    <div class="card"><h2>आज का दर्ज खर्च</h2><div class="big" id="todayExp">–</div></div>
+    <div class="card"><h2>इस महीने की बिक्री</h2><div class="big" id="monthSales">–</div></div>
+    <div class="card"><h2>इस महीने का दर्ज खर्च</h2><div class="big" id="monthExp">–</div></div>
+    <div class="card"><h2>चुने गए समय का अंतर</h2><div class="big" id="diff">–</div><div class="hint">बिक्री − दर्ज खर्च। यह शुद्ध मुनाफ़ा (net profit) नहीं है।</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h3>सबसे ज़्यादा बिकने वाली मिठाई</h3><ul class="list" id="best"></ul></div>
+    <div class="card"><h3>रोज़ की बिक्री (चार्ट)</h3><div class="bars" id="trend"></div><div class="barlabels"><span id="tFrom"></span><span id="tTo"></span></div></div>
+    <div class="card"><h3>हाल की बिक्री</h3><ul class="list" id="recentSales"></ul></div>
+    <div class="card"><h3>हाल के खर्च</h3><ul class="list" id="recentExp"></ul></div>
+    <div class="card"><h3>खर्च की category (चार्ट)</h3><ul class="list" id="expCat"></ul></div>
+  </div>
+  <p class="hint" id="saved"></p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

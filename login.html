@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login | Pt. Babulal Ratanlal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="loginwrap"><div class="loginbox">
+  <div class="logobox"><img class="logo-big" src="pbr-logo.jpg" alt="PBR – Pt. Babulal Ratanlal, Since 1940"><p class="tag">HANDCRAFTED SWEETS OF INDIA · KHURJA</p></div>
+
+  <form id="loginForm">
+    <label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
+    <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+    <button class="btn btn-primary" id="loginBtn" type="submit">Login करें</button>
+    <button class="linkbtn" id="forgotLink" type="button">Password भूल गए?</button>
+  </form>
+
+  <form id="forgotForm" hidden>
+    <p>Apna email likhein. Hum password badalne ka link bhejenge.</p>
+    <label for="femail">Email</label><input id="femail" type="email" required>
+    <button class="btn btn-primary" type="submit">Reset link भेजें</button>
+    <button class="linkbtn" id="backLink" type="button">← Login par wapas</button>
+  </form>
+
+  <form id="newPassForm" hidden>
+    <p>Naya password banayein (kam se kam 8 akshar).</p>
+    <label for="np">Naya password</label><input id="np" type="password" minlength="8" autocomplete="new-password" required>
+    <button class="btn btn-primary" type="submit">Password सेव करें</button>
+  </form>
+
+  <div id="msg" class="msg" role="alert" hidden></div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+(async function () {
+  const $ = id => document.getElementById(id);
+  const forms = ["loginForm", "forgotForm", "newPassForm"];
+  const show = id => forms.forEach(f => ($(f).hidden = f !== id));
+  function say(text, ok) { const m = $("msg"); m.hidden = !text; m.textContent = text || ""; m.className = "msg " + (ok ? "ok" : "err"); }
+  if (!PBR.db) { say(PBR.configError); return; }
+  if (location.search.includes("denied")) say("Yeh account owner ke roop me register nahi hai.");
+
+  PBR.db.auth.onAuthStateChange(ev => { if (ev === "PASSWORD_RECOVERY") { show("newPassForm"); say(""); } });
+  const { data } = await PBR.db.auth.getSession();
+  if (data.session && !location.hash.includes("type=recovery")) location.replace("index.html");
+
+  $("forgotLink").onclick = () => { show("forgotForm"); say(""); };
+  $("backLink").onclick = () => { show("loginForm"); say(""); };
+
+  $("loginForm").onsubmit = async e => {
+    e.preventDefault(); say(""); $("loginBtn").disabled = true; $("loginBtn").textContent = "Ruko...";
+    const { error } = await PBR.db.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+    if (error) { say("Login nahi hua: email ya password galat hai."); $("loginBtn").disabled = false; $("loginBtn").textContent = "Login करें"; return; }
+    location.replace("index.html");
+  };
+  $("forgotForm").onsubmit = async e => {
+    e.preventDefault(); say("");
+    const { error } = await PBR.db.auth.resetPasswordForEmail($("femail").value.trim(), { redirectTo: location.origin + location.pathname });
+    error ? say("Link nahi bhej paaye: " + error.message) : say("Agar yeh email registered hai to reset link bhej diya gaya hai.", true);
+  };
+  $("newPassForm").onsubmit = async e => {
+    e.preventDefault();
+    const { error } = await PBR.db.auth.updateUser({ password: $("np").value });
+    if (error) return say("Password nahi badla: " + error.message);
+    say("Password badal gaya. Ab dashboard khul raha hai...", true);
+    setTimeout(() => location.replace("index.html"), 1200);
+  };
+})();
+</script>
+</body>
+</html>
